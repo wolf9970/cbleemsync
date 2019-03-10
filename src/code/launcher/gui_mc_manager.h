@@ -23,7 +23,7 @@ public:
     using GuiScreen::GuiScreen;
 
 private:
-    psmc *memcard1, *memcard2;
+    psmc memcard1, memcard2;
     SDL_Texture *mcGrid= nullptr;
 };
 

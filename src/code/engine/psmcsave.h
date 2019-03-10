@@ -24,7 +24,6 @@ private:
     int SAVE_ADDRESS;
 
     string shiftJISToUTF8(const string &input);
-    uint8_t getshiftJISArray[25088];
 };
 
 
