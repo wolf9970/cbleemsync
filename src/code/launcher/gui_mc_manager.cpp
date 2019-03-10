@@ -9,8 +9,14 @@
 #include "../lang.h"
 
 void GuiMcManager::loadAssets() {
-    string dotMatrixFile = sonyStuffPath+"/MC/Dot_Matrix.png";
-    mcGrid = IMG_LoadTexture(renderer, dotMatrixFile.c_str());
+    string fileToLoad = sonyStuffPath+"/MC/Dot_Matrix.png";
+    mcGrid = IMG_LoadTexture(renderer, fileToLoad.c_str());
+    fileToLoad = sonyStuffPath+"/MC/Pencil_Carsor.png";
+    mcPencil = IMG_LoadTexture(renderer,fileToLoad.c_str());
+    pencilPos.w=42;
+    pencilPos.h=42;
+    pencilPos.x=0;
+    pencilPos.y=0;
 }
 
 void GuiMcManager::loadMemoryCard() {
@@ -47,6 +53,7 @@ void GuiMcManager::render() {
         output.y = yStart + (yShift*line)+yDecal;
         if(memcard1.entries[i].getGameName() != ""){
             SDL_RenderCopy(renderer,memcard1.entries[i].getGameIcon(renderer),&input,&output);
+            //printf("%s\n",memcard1.entries[i].getGameName().c_str());
         }
         col++;
         if(col == 3){
@@ -82,6 +89,14 @@ void GuiMcManager::render() {
     output.x = 940;
     output.y = 80;
     SDL_RenderCopy(renderer,mcGrid,&input, &output);
+
+    //Draw the pencil
+    input.h = 42;
+    input.w = 42;
+    input.x = 0;
+    input.y = 0;
+    SDL_RenderCopy(renderer,mcPencil,&input,&pencilPos);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -89,6 +104,7 @@ void GuiMcManager::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
+        render();
         gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -101,13 +117,29 @@ void GuiMcManager::loop() {
                     if (e.jbutton.button == PCS_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
-
                     };
-
-
+                case SDL_JOYAXISMOTION:
+                    if(e.jaxis.axis == 0){
+                        if(e.jaxis.value < -3200){
+                            pencilPos.x-=10;
+                        }
+                        if(e.jaxis.value > 3200){
+                            pencilPos.x+=10;
+                        }
+                    }
+                    if(e.jaxis.axis == 1) {
+                        if (e.jaxis.value < -3200) {
+                            pencilPos.y -= 10;
+                        }
+                        if (e.jaxis.value > 3200) {
+                            pencilPos.y += 10;
+                        }
+                    }
             }
 
         }
+
     }
+
     //Draw dot matrix
 }

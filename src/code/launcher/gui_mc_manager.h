@@ -24,7 +24,9 @@ public:
 
 private:
     psmc memcard1, memcard2;
+    SDL_Rect pencilPos;
     SDL_Texture *mcGrid= nullptr;
+    SDL_Texture *mcPencil= nullptr;
 };
 
 
