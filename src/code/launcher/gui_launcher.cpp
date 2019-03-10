@@ -9,6 +9,7 @@
 #include "../lang.h"
 #include "pcsx_interceptor.h"
 #include "gui_btn_guide.h"
+#include "gui_mc_manager.h"
 
 
 
@@ -1041,8 +1042,12 @@ void GuiLauncher::loop() {
                                     continue;
                                 }
                                 Mix_PlayChannel(-1, gui->cancel, 0);
-                                notificationTime = time;
-                                notificationText = _("MemCard Manager will be available soon");
+                                GuiMcManager *manager = new GuiMcManager(renderer);
+                                manager->memcardFolder = gamesList[selGame]->ssFolder;
+                                manager->sonyStuffPath = gui->getSonyImagePath();
+                                manager->loadAssets();
+                                manager->loadMemoryCard();
+                                manager->show();
                             }
                             if (menu->selOption == 1) {
                                 if (gamesList.empty()) {

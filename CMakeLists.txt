@@ -48,6 +48,10 @@ add_executable(autobleem-gui
         src/code/engine/cfgprocessor.h
         src/code/engine/memcard.cpp
         src/code/engine/memcard.h
+		src/code/engine/psmc.cpp
+		src/code/engine/psmc.h
+		src/code/engine/psmcsave.cpp
+		src/code/engine/psmcsave.h
         src/code/gui/gui_about.cpp
         src/code/gui/gui_about.h
         src/code/gui/gui_screen.cpp
@@ -102,7 +106,10 @@ add_executable(autobleem-gui
         src/code/launcher/ps_centerlabel.h
         src/code/launcher/ps_stateselector.cpp
         src/code/launcher/ps_stateselector.h
-        src/code/launcher/gui_btn_guide.cpp src/code/launcher/gui_btn_guide.h)
+        src/code/launcher/gui_btn_guide.cpp
+		src/code/launcher/gui_btn_guide.h
+		src/code/launcher/gui_mc_manager.cpp
+		src/code/launcher/gui_mc_manager.h)
 
 add_executable(starter
 		src/code/starter.cpp
