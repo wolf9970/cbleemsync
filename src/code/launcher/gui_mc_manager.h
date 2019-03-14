@@ -24,6 +24,14 @@ public:
 
 private:
     psmc memcard1, memcard2;
+    bool mc1Array[3][4];
+    bool mc2Array[3][4];
+    int poscol, posline, posmc;
+    const int mc1XStart = 150;
+    const int mc2XStart = 1010;
+    const int mcYStart = 150;
+    const int pencilShiftX = 80;
+    const int pencilShiftY = 80;
     SDL_Rect pencilPos;
     SDL_Texture *mcGrid= nullptr;
     SDL_Texture *mcPencil= nullptr;

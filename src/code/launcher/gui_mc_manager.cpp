@@ -15,8 +15,11 @@ void GuiMcManager::loadAssets() {
     mcPencil = IMG_LoadTexture(renderer,fileToLoad.c_str());
     pencilPos.w=42;
     pencilPos.h=42;
-    pencilPos.x=0;
-    pencilPos.y=0;
+    pencilPos.x=mc1XStart;
+    pencilPos.y=150;
+    poscol = 0;
+    posline = 0;
+    posmc = 1;
 }
 
 void GuiMcManager::loadMemoryCard() {
@@ -40,7 +43,7 @@ void GuiMcManager::render() {
     gui->renderBackground();
     gui->renderTextBar();
     gui->renderTextLine("Memory Card Manager",1,1,true);
-    gui->renderStatus("|@O| " + _("Go back") + "|");
+    //gui->renderStatus("|@O| " + _("Go back") + "|");
     //Draw Memcard images
     input.h=16;
     input.w=16;
@@ -51,9 +54,11 @@ void GuiMcManager::render() {
     for(int i = 0; i < 15; i++){
         output.x = xStartMC1 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard1.entries[i].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard1.entries[i].getGameIcon(renderer),&input,&output);
-            //printf("%s\n",memcard1.entries[i].getGameName().c_str());
+        if(memcard1.entries[0].getGameName() != ""){
+            SDL_RenderCopy(renderer,memcard1.entries[0].getGameIcon(renderer),&input,&output);
+            mc1Array[col][line] = true;
+        }else{
+            mc1Array[col][line] = false;
         }
         col++;
         if(col == 3){
@@ -68,8 +73,11 @@ void GuiMcManager::render() {
     for(int i = 0; i < 15; i++){
         output.x = xStartMC2 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard2.entries[i].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard2.entries[i].getGameIcon(renderer),&input,&output);
+        if(memcard1.entries[0].getGameName() != ""){
+            SDL_RenderCopy(renderer,memcard1.entries[0].getGameIcon(renderer),&input,&output);
+            mc2Array[col][line] = true;
+        }else{
+            mc1Array[col][line] = false;
         }
         col++;
         if(col == 3){
@@ -104,7 +112,7 @@ void GuiMcManager::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
-        render();
+
         gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -120,24 +128,49 @@ void GuiMcManager::loop() {
                     };
                 case SDL_JOYAXISMOTION:
                     if(e.jaxis.axis == 0){
+                        //X-
                         if(e.jaxis.value < -3200){
-                            pencilPos.x-=10;
+                            if(posmc == 1){
+                                if(poscol > 0){
+                                    poscol--;
+                                    pencilPos.x = mc1XStart + (poscol*pencilShiftX);
+                                }
+                            }
                         }
+                        //X+
                         if(e.jaxis.value > 3200){
-                            pencilPos.x+=10;
+                            if(posmc == 1){
+                                if(poscol < 2){
+                                    poscol++;
+                                    pencilPos.x = mc1XStart + (poscol*pencilShiftX);
+                                }
+                            }
                         }
                     }
                     if(e.jaxis.axis == 1) {
+                        //Y-
                         if (e.jaxis.value < -3200) {
-                            pencilPos.y -= 10;
+                            if(posmc == 1){
+                                if(posline > 0){
+                                    posline--;
+                                    pencilPos.y = mcYStart + (posline*pencilShiftY);
+                                }
+                            }
                         }
+                        //Y+
                         if (e.jaxis.value > 3200) {
-                            pencilPos.y += 10;
+                            if(posmc == 1){
+                                if(posline < 4){
+                                    posline++;
+                                    pencilPos.y = mcYStart + (posline*pencilShiftY);
+                                }
+                            }
                         }
                     }
             }
 
         }
+        render();
 
     }
 
