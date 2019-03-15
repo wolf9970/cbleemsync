@@ -73,11 +73,11 @@ void GuiMcManager::render() {
     for(int i = 0; i < 15; i++){
         output.x = xStartMC2 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard1.entries[0].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard1.entries[0].getGameIcon(renderer),&input,&output);
+        if(memcard2.entries[i].getGameName() != ""){
+            SDL_RenderCopy(renderer,memcard2.entries[i].getGameIcon(renderer),&input,&output);
             mc2Array[col][line] = true;
         }else{
-            mc1Array[col][line] = false;
+            mc2Array[col][line] = false;
         }
         col++;
         if(col == 3){
@@ -103,6 +103,13 @@ void GuiMcManager::render() {
     input.w = 42;
     input.x = 0;
     input.y = 0;
+    if(posmc == 1){
+        pencilPos.x = mc1XStart + (poscol*pencilShiftX);
+    }
+    if(posmc == 2){
+        pencilPos.x = mc2XStart + (poscol*pencilShiftX);
+    }
+    pencilPos.y = mcYStart + (posline*pencilShiftY);
     SDL_RenderCopy(renderer,mcPencil,&input,&pencilPos);
 
     SDL_RenderPresent(renderer);
@@ -112,7 +119,9 @@ void GuiMcManager::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
-
+        oldcol = poscol;
+        oldline = posline;
+        oldmc = posmc;
         gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -130,19 +139,32 @@ void GuiMcManager::loop() {
                     if(e.jaxis.axis == 0){
                         //X-
                         if(e.jaxis.value < -3200){
+                            poscol--;
                             if(posmc == 1){
-                                if(poscol > 0){
-                                    poscol--;
-                                    pencilPos.x = mc1XStart + (poscol*pencilShiftX);
+                                if(poscol < 0){
+                                    poscol = 0;
                                 }
                             }
+                            if(posmc == 2){
+                                if(poscol < 0){
+                                    posmc = 1;
+                                    poscol = 2;
+                                }
+                            }
+
                         }
                         //X+
                         if(e.jaxis.value > 3200){
+                            poscol++;
                             if(posmc == 1){
-                                if(poscol < 2){
-                                    poscol++;
-                                    pencilPos.x = mc1XStart + (poscol*pencilShiftX);
+                                if(poscol > 2){
+                                    posmc = 2;
+                                    poscol = 0;
+                                }
+                            }
+                            if(posmc == 2){
+                                if(poscol > 2){
+                                    poscol = 2;
                                 }
                             }
                         }
@@ -150,25 +172,33 @@ void GuiMcManager::loop() {
                     if(e.jaxis.axis == 1) {
                         //Y-
                         if (e.jaxis.value < -3200) {
-                            if(posmc == 1){
-                                if(posline > 0){
-                                    posline--;
-                                    pencilPos.y = mcYStart + (posline*pencilShiftY);
-                                }
+                            if(posline > 0){
+                                posline--;
                             }
                         }
                         //Y+
                         if (e.jaxis.value > 3200) {
-                            if(posmc == 1){
-                                if(posline < 4){
-                                    posline++;
-                                    pencilPos.y = mcYStart + (posline*pencilShiftY);
-                                }
+                            if(posline < 4){
+                                posline++;
                             }
                         }
                     }
             }
 
+        }
+        if(posmc == 1){
+            if(mc1Array[poscol][posline] == false){
+                posmc = oldmc;
+                posline = oldline;
+                poscol = oldcol;
+            }
+        }
+        if(posmc == 2){
+            if(mc2Array[poscol][posline] == false){
+                posmc = oldmc;
+                posline = oldline;
+                poscol = oldcol;
+            }
         }
         render();
 
