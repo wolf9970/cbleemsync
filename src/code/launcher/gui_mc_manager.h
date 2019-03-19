@@ -24,8 +24,8 @@ public:
 
 private:
     psmc memcard1, memcard2;
-    bool mc1Array[3][4];
-    bool mc2Array[3][4];
+    int mc1Array[3][5];
+    int mc2Array[3][5];
     int dummy;
     const int mc1XStart = 150;
     const int mc2XStart = 1010;

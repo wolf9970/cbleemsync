@@ -39,10 +39,12 @@ void GuiMcManager::render() {
     int col = 0;
     int w = 256;
     int h = 420;
+    string gameName = memcard1.entries[mc1Array[poscol][posline]].getGameName();
     SDL_Rect input, output;
     gui->renderBackground();
     gui->renderTextBar();
     gui->renderTextLine("Memory Card Manager",1,1,true);
+    gui->renderTextLine(gameName,2,1,true);
     //gui->renderStatus("|@O| " + _("Go back") + "|");
     //Draw Memcard images
     input.h=16;
@@ -54,11 +56,11 @@ void GuiMcManager::render() {
     for(int i = 0; i < 15; i++){
         output.x = xStartMC1 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard1.entries[0].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard1.entries[0].getGameIcon(renderer),&input,&output);
-            mc1Array[col][line] = true;
+        if(memcard1.entries[i].getGameName() != ""){
+            SDL_RenderCopy(renderer,memcard1.entries[i].getGameIcon(renderer),&input,&output);
+            mc1Array[col][line] = i;
         }else{
-            mc1Array[col][line] = false;
+            mc1Array[col][line] = -1;
         }
         col++;
         if(col == 3){
@@ -70,14 +72,14 @@ void GuiMcManager::render() {
     //Fill memory card 2
     line = 0;
     col = 0;
-    for(int i = 0; i < 15; i++){
+    for(int i = 0; i < 14; i++){
         output.x = xStartMC2 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
         if(memcard2.entries[i].getGameName() != ""){
             SDL_RenderCopy(renderer,memcard2.entries[i].getGameIcon(renderer),&input,&output);
-            mc2Array[col][line] = true;
+            mc2Array[col][line] = i;
         }else{
-            mc2Array[col][line] = false;
+            mc2Array[col][line] = -1;
         }
         col++;
         if(col == 3){
@@ -187,14 +189,14 @@ void GuiMcManager::loop() {
 
         }
         if(posmc == 1){
-            if(mc1Array[poscol][posline] == false){
+            if(mc1Array[poscol][posline] < 0){
                 posmc = oldmc;
                 posline = oldline;
                 poscol = oldcol;
             }
         }
         if(posmc == 2){
-            if(mc2Array[poscol][posline] == false){
+            if(mc2Array[poscol][posline] < 0){
                 posmc = oldmc;
                 posline = oldline;
                 poscol = oldcol;
