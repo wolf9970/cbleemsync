@@ -45,7 +45,7 @@ void GuiMcManager::render() {
     gui->renderTextBar();
     gui->renderTextLine("Memory Card Manager",1,1,true);
     gui->renderTextLine(gameName,2,1,true);
-    //gui->renderStatus("|@O| " + _("Go back") + "|");
+    gui->renderStatus("|@S| " + _("Reset the memory cards")+" | "+ "|@T| " + _("Delete Block") + " | "+"|@O| " + _("Go back") + "|");
     //Draw Memcard images
     input.h=16;
     input.w=16;

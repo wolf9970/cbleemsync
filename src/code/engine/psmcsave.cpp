@@ -77,7 +77,7 @@ string psmcsave::shiftJISToUTF8(const string &input) {
     ifstream convTableFile("shiftjis.dat",ios_base::binary);
     vector<unsigned char> convTableVec(istreambuf_iterator<char>(convTableFile), {});
 
-    std::string output(3 * input.length(), ' '); //ShiftJis won't give 4byte UTF8, so max. 3 byte per input char are needed
+    std::wstring output(3 * input.length(), ' '); //ShiftJis won't give 4byte UTF8, so max. 3 byte per input char are needed
     size_t indexInput = 0, indexOutput = 0;
 
     while(indexInput < input.length())
@@ -125,5 +125,13 @@ string psmcsave::shiftJISToUTF8(const string &input) {
     }
 
     output.resize(indexOutput); //remove the unnecessary bytes
-    return output;
+    //Converting to mb string
+    size_t outputSize = output.length() + 1; // +1 for null terminator
+    char * outputString;
+    outputString = new char[outputSize];
+    size_t charsConverted = 0;
+    const wchar_t * inputW = output.c_str();
+    wcstombs(outputString,inputW,outputSize);
+    string finalOut = outputString;
+    return finalOut;
 }
