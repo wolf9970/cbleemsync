@@ -24,6 +24,7 @@ private:
     int SAVE_ADDRESS;
 
     string shiftJISToUTF8(const string &input);
+    string fwToHw(string input);
 };
 
 
