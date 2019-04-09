@@ -75,7 +75,7 @@ public:
     int renderLogo(bool small);
     void renderStatus(string text);
     void renderTextBar();
-    int renderTextLine(string text, int line, int offset, bool center);
+    int renderTextLine(string text, int line, int offset, bool center, bool useSonyFont = false);
     int renderTextLine(string text, int line, int offset);
     void renderSelectionBox(int line, int offset);
     void renderLabelBox(int line, int offset);
@@ -126,6 +126,7 @@ public:
 
     Mix_Music * music = NULL;
     TTF_Font *font =  NULL;
+    TTF_Font *sonyFont = NULL;
     bool forceScan=false;
 
     Mix_Chunk *cancel = NULL;

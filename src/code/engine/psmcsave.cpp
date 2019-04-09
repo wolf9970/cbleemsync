@@ -6,6 +6,8 @@
 #include <array>
 #include <map>
 #include "psmcsave.h"
+#include "../util.h"
+#include "../main.h"
 
 psmcsave::psmcsave() {
 
@@ -102,32 +104,34 @@ string psmcsave::shiftJISToUTF8(const string &input) {
 
         //unicode number is...
         uint16_t unicodeValue = (convTableVec[arrayOffset] << 8) | convTableVec[arrayOffset + 1];
-        unicodeValue-=65248;
-        //converting to UTF8
-        if(unicodeValue > 0){
-            if(unicodeValue < 0x80)
-            {
-                output[indexOutput++] = unicodeValue;
-            }
-            else if(unicodeValue < 0x800)
-            {
-                output[indexOutput++] = 0xC0 | (unicodeValue >> 6);
-                output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
-            }
-            else
-            {
-                output[indexOutput++] = 0xE0 | (unicodeValue >> 12);
-                output[indexOutput++] = 0x80 | ((unicodeValue & 0xfff) >> 6);
-                output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
+        if(unicodeValue == 12288 || unicodeValue == 0){
+            output[indexOutput++] = ' ';
+        }else{
+            //unicodeValue-=65248;
+            //converting to UTF8
+            if(unicodeValue > 0){
+                if(unicodeValue < 0x80)
+                {
+                    output[indexOutput++] = unicodeValue;
+                }
+                else if(unicodeValue < 0x800)
+                {
+                    output[indexOutput++] = 0xC0 | (unicodeValue >> 6);
+                    output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
+                }
+                else
+                {
+                    output[indexOutput++] = 0xE0 | (unicodeValue >> 12);
+                    output[indexOutput++] = 0x80 | ((unicodeValue & 0xfff) >> 6);
+                    output[indexOutput++] = 0x80 | (unicodeValue & 0x3f);
+                }
             }
         }
+
 
 
     }
 
     output.resize(indexOutput); //remove the unnecessary bytes
-    char mychar = output[0];
-    char * outchar;
-    //wctomb(outchar, mychar);
-    return output;
+    return rtrim(output);
 }

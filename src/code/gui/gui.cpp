@@ -160,6 +160,7 @@ void Gui::loadAssets() {
     buttonUncheck = loadThemeTexture(renderer, themePath, defaultPath, "uncheck");
     string fontPath = (themePath + themeData.values["font"]);
     font = TTF_OpenFont(fontPath.c_str(), atoi(themeData.values["fsize"].c_str()));
+    sonyFont = TTF_OpenFont("./sony/font/SSTJapanese-Regular.ttf",atoi(themeData.values["fsize"].c_str()));
 
 
     if (music != nullptr) {
@@ -615,6 +616,7 @@ void Gui::finish() {
     SDL_DestroyTexture(buttonUncheck);
     SDL_DestroyRenderer(renderer);
     TTF_CloseFont(font);
+    TTF_CloseFont(sonyFont);
     Mix_HaltMusic();
     Mix_FreeMusic(music);
     Mix_FreeChunk(cursor);
@@ -853,7 +855,7 @@ int Gui::renderTextLine(string text, int line, int offset) {
     return renderTextLine(text, line, offset, false);
 }
 
-int Gui::renderTextLine(string text, int line, int offset, bool center) {
+int Gui::renderTextLine(string text, int line, int offset, bool center, bool useSonyFont) {
 
     SDL_Rect rect2;
     rect2.x = atoi(themeData.values["opscreenx"].c_str());
@@ -865,7 +867,12 @@ int Gui::renderTextLine(string text, int line, int offset, bool center) {
     SDL_Rect textRec;
 
     getTextAndRect(renderer, 0, 0, "*", font, &textTex, &textRec);
-    getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
+    if(useSonyFont){
+        getEmojiTextTexture(renderer, text, sonyFont, &textTex, &textRec);
+    }else{
+        getEmojiTextTexture(renderer, text, font, &textTex, &textRec);
+    }
+
     textRec.x = rect2.x + 10;
     textRec.y = (textRec.h * line) + offset;
     /*
