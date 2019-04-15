@@ -39,7 +39,7 @@ void GuiMcManager::render() {
     int col = 0;
     int w = 256;
     int h = 420;
-    string gameName = memcard1.entries[mc1Array[poscol][posline]].getGameName();
+    string gameName = memcard1.entries[mc1Array[poscol][posline]].gameName;
     SDL_Rect input, output;
     gui->renderBackground();
     gui->renderTextBar();

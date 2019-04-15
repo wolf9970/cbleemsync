@@ -10,11 +10,17 @@
 #include "../main.h"
 
 psmcsave::psmcsave() {
-
+    gameName = "";
 }
 
 void psmcsave::setDataBuffer(vector<unsigned char> buff) {
     saveBuffer = buff;
+    const int GN_FB = 0x4;
+    const int GN_LB = 0x43;
+    vector<unsigned char>::const_iterator memBegin = buff.begin();
+    vector<unsigned char> gameNameEncoded(memBegin+GN_FB,memBegin+GN_LB);
+    string gameNameDecoded(gameNameEncoded.begin(), gameNameEncoded.end());
+    gameName = shiftJISToUTF8(gameNameDecoded);
 }
 
 void psmcsave::setSaveAddress(int address) {
@@ -22,13 +28,7 @@ void psmcsave::setSaveAddress(int address) {
 }
 
 string psmcsave::getGameName() {
-    const int GN_FB = 0x4;
-    const int GN_LB = 0x43;
-    vector<unsigned char>::const_iterator first = saveBuffer.begin() + GN_FB;
-    vector<unsigned char>::const_iterator last = saveBuffer.begin() + GN_LB;
-    vector<unsigned char> gameNameEncoded(first,last);
-    string gameNameDecoded(gameNameEncoded.begin(), gameNameEncoded.end());
-    return shiftJISToUTF8(gameNameDecoded);
+    return gameName;
 }
 
 SDL_Texture *psmcsave::getGameIcon(SDL_Renderer *renderer) {
@@ -36,7 +36,6 @@ SDL_Texture *psmcsave::getGameIcon(SDL_Renderer *renderer) {
     const int PALETTE_BEGIN = 0x60;
     const int ICON_BEGIN = 0x80;
     const int FRAME_SIZE = 0x7F;
-    unsigned char *color[4];
     unsigned char colorPalette[16][4];
     uint8_t pixels[16*16*4];
     int pixPos = 0;
@@ -48,10 +47,6 @@ SDL_Texture *psmcsave::getGameIcon(SDL_Renderer *renderer) {
         unsigned char G = (word & 0x3E0) >> 2;
         unsigned char B = (word & 0x7C00) >> 7;
         unsigned char A = ((word & 32768) >> 15 )==1 ? true:false;
-        /*color[0] = &R;
-        color[1] = &G;
-        color[2] = &B;
-        color[3] = &A;*/
         colorPalette[i/2][0] = R;
         colorPalette[i/2][1] = G;
         colorPalette[i/2][2] = B;

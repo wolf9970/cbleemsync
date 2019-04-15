@@ -14,6 +14,7 @@ using namespace std;
 class psmcsave {
 public:
     psmcsave();
+    string gameName;
     void setDataBuffer(vector<unsigned char> buff);
     string getGameName();
     SDL_Texture *getGameIcon(SDL_Renderer *renderer);
@@ -23,6 +24,8 @@ private:
     vector<unsigned char> saveBuffer;
     int SAVE_ADDRESS;
 
+    SDL_Texture *gameIcon(SDL_Renderer * renderer);
+    vector<unsigned char>::const_iterator memBegin;
     string shiftJISToUTF8(const string &input);
     string fwToHw(string input);
 };
