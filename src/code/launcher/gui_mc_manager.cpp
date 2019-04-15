@@ -23,6 +23,7 @@ void GuiMcManager::loadAssets() {
 }
 
 void GuiMcManager::loadMemoryCard() {
+    //TODO : check if memcards files exists !
     memcard1.loadFile(memcardFolder+"memcards/card1.mcd");
     memcard2.loadFile(memcardFolder+"memcards/card2.mcd");
 }
@@ -39,25 +40,25 @@ void GuiMcManager::render() {
     int col = 0;
     int w = 256;
     int h = 420;
-    string gameName = memcard1.entries[mc1Array[poscol][posline]].gameName;
-    SDL_Rect input, output;
-    gui->renderBackground();
-    gui->renderTextBar();
-    gui->renderTextLine("Memory Card Manager",1,1,true);
-    gui->renderTextLine(gameName,3,1,true,true);
-    gui->renderStatus("|@S| " + _("Reset the memory cards")+" | "+ "|@T| " + _("Delete Block") + " | "+"|@O| " + _("Go back") + "|");
+    string gameName = "";
     //Draw Memcard images
+    SDL_Rect input, output;
     input.h=16;
     input.w=16;
     output.h=75;
     output.w=75;
+    //Draw UI Base
+    gui->renderBackground();
+    gui->renderTextBar();
+    gui->renderTextLine("Memory Card Manager",1,1,true);
+    //
 
     //Fill memory card 1
     for(int i = 0; i < 15; i++){
         output.x = xStartMC1 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard1.entries[i].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard1.entries[i].getGameIcon(renderer),&input,&output);
+        if(memcard1.entries[i].gameName != ""){
+            SDL_RenderCopy(renderer,memcard1.entries[i].gameIcon,&input,&output);
             mc1Array[col][line] = i;
         }else{
             mc1Array[col][line] = -1;
@@ -75,8 +76,8 @@ void GuiMcManager::render() {
     for(int i = 0; i < 14; i++){
         output.x = xStartMC2 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
-        if(memcard2.entries[i].getGameName() != ""){
-            SDL_RenderCopy(renderer,memcard2.entries[i].getGameIcon(renderer),&input,&output);
+        if(memcard2.entries[i].gameName != ""){
+            SDL_RenderCopy(renderer,memcard2.entries[i].gameIcon,&input,&output);
             mc2Array[col][line] = i;
         }else{
             mc2Array[col][line] = -1;
@@ -87,6 +88,17 @@ void GuiMcManager::render() {
             line++;
         }
     }
+
+    if(posmc == 1){
+        gameName = memcard1.entries[mc1Array[poscol][posline]].gameName;
+    }else if(posmc == 2){
+        gameName = memcard2.entries[mc2Array[poscol][posline]].gameName;
+    }else{
+        gameName = "WRONG MC POS";
+    }
+
+    gui->renderStatus("|@S| " + _("Reset the memory cards")+" | "+ "|@T| " + _("Delete Block") + " | "+"|@O| " + _("Go back") + "|");
+    gui->renderTextLine(gameName,3,1,true,true);
 
     //Draw dot matrix image
     input.x = 0, input.y = 0;

@@ -15,17 +15,14 @@ class psmcsave {
 public:
     psmcsave();
     string gameName;
+    SDL_Texture *gameIcon;
+    //SDL_Renderer * renderer;
     void setDataBuffer(vector<unsigned char> buff);
-    string getGameName();
-    SDL_Texture *getGameIcon(SDL_Renderer *renderer);
     void setSaveAddress(int address);
 
 private:
     vector<unsigned char> saveBuffer;
     int SAVE_ADDRESS;
-
-    SDL_Texture *gameIcon(SDL_Renderer * renderer);
-    vector<unsigned char>::const_iterator memBegin;
     string shiftJISToUTF8(const string &input);
     string fwToHw(string input);
 };

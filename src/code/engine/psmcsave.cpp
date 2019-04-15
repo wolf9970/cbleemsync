@@ -5,34 +5,30 @@
 #include <algorithm>
 #include <array>
 #include <map>
+#include "../gui/gui.h"
 #include "psmcsave.h"
 #include "../util.h"
 #include "../main.h"
 
 psmcsave::psmcsave() {
     gameName = "";
+
 }
 
 void psmcsave::setDataBuffer(vector<unsigned char> buff) {
+    //Setting data buffer
     saveBuffer = buff;
+    //Reading game name
     const int GN_FB = 0x4;
     const int GN_LB = 0x43;
     vector<unsigned char>::const_iterator memBegin = buff.begin();
     vector<unsigned char> gameNameEncoded(memBegin+GN_FB,memBegin+GN_LB);
     string gameNameDecoded(gameNameEncoded.begin(), gameNameEncoded.end());
     gameName = shiftJISToUTF8(gameNameDecoded);
-}
-
-void psmcsave::setSaveAddress(int address) {
-    SAVE_ADDRESS = address;
-}
-
-string psmcsave::getGameName() {
-    return gameName;
-}
-
-SDL_Texture *psmcsave::getGameIcon(SDL_Renderer *renderer) {
-    SDL_Texture *icon = SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_STATIC,16,16);
+    //creating texture
+    shared_ptr<Gui> gui(Gui::getInstance());
+    //renderer = gui->renderer;
+    gameIcon = SDL_CreateTexture(gui->renderer,SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_STATIC,16,16);
     const int PALETTE_BEGIN = 0x60;
     const int ICON_BEGIN = 0x80;
     const int FRAME_SIZE = 0x7F;
@@ -66,8 +62,11 @@ SDL_Texture *psmcsave::getGameIcon(SDL_Renderer *renderer) {
         pixels[pixPos+7] = colorPalette[color1][0];
         pixPos+=8;
     }
-    SDL_UpdateTexture(icon, NULL, pixels,16*4);
-    return icon;
+    SDL_UpdateTexture(gameIcon, NULL, pixels,16*4);
+}
+
+void psmcsave::setSaveAddress(int address) {
+    SAVE_ADDRESS = address;
 }
 
 string psmcsave::shiftJISToUTF8(const string &input) {
