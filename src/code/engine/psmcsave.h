@@ -16,7 +16,6 @@ public:
     psmcsave();
     string gameName;
     SDL_Texture *gameIcon;
-    //SDL_Renderer * renderer;
     void setDataBuffer(vector<unsigned char> buff);
     void setSaveAddress(int address);
 

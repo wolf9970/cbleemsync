@@ -73,7 +73,7 @@ void GuiMcManager::render() {
     //Fill memory card 2
     line = 0;
     col = 0;
-    for(int i = 0; i < 14; i++){
+    for(int i = 0; i < 15; i++){
         output.x = xStartMC2 + (xShift*col)+xDecal;
         output.y = yStart + (yShift*line)+yDecal;
         if(memcard2.entries[i].gameName != ""){
@@ -148,6 +148,7 @@ void GuiMcManager::loop() {
                     if (e.jbutton.button == PCS_BTN_CIRCLE) {
                         Mix_PlayChannel(-1, gui->cancel, 0);
                         menuVisible = false;
+                        destroySDLAssets();
                     };
                 case SDL_JOYAXISMOTION:
                     if(e.jaxis.axis == 0){
@@ -219,4 +220,13 @@ void GuiMcManager::loop() {
     }
 
     //Draw dot matrix
+}
+
+void GuiMcManager::destroySDLAssets() {
+    for(int i = 0; i<15; i++){
+        SDL_DestroyTexture(memcard1.entries[i].gameIcon);
+        SDL_DestroyTexture(memcard2.entries[i].gameIcon);
+    }
+    SDL_DestroyTexture(mcGrid);
+    SDL_DestroyTexture(mcPencil);
 }

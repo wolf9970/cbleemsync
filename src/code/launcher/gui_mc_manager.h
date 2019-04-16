@@ -20,6 +20,7 @@ public:
     void loop();
     void loadAssets();
     void loadMemoryCard();
+    void destroySDLAssets();
     using GuiScreen::GuiScreen;
 
 private:
