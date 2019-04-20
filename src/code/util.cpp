@@ -2,11 +2,13 @@
 #include "main.h"
 
 #include <fstream>
+#include <sys/wait.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <math.h>
 #include <algorithm>
 #include <iomanip>
+#include <libgen.h>
 
 using namespace std;
 #define FILE_BUFFER 524288
@@ -25,6 +27,29 @@ bool wayToSort(DirEntry i, DirEntry j) {
     name1 = lcase(name1);
     name2 = lcase(name2);
     return name1 < name2;
+}
+
+void Util::powerOff()
+{
+#if defined(__x86_64__) || defined(_M_X64)
+    exit(0);
+#else
+    Util::execUnixCommad("shutdown -h now");
+    exit(0);
+#endif
+
+
+}
+
+string Util::getFileNameFromPath(string path)
+{
+    string result = "";
+    char *cstr = new char[path.length() + 1];
+    strcpy(cstr, path.c_str());
+    char * base = basename(cstr);
+    result += base;
+    delete [] cstr;
+    return result;
 }
 
 string fixPath(string path)
@@ -297,6 +322,9 @@ unsigned long Util::readDword(ifstream *stream) {
  * Return the available space of a usb device
  */
 string Util::getAvailableSpace(){
+#if defined(__x86_64__) || defined(_M_X64)
+    return "x86 - does not care about free space - Does not work on mac";
+    #else
     string str;
     int gb = 1024 * 1024;
     string dfResult;
@@ -308,6 +336,7 @@ string Util::getAvailableSpace(){
     freeSpacePerc = (freeSpace / totalSpace) * 100;
     str = floatToString(freeSpace, 2) + " GB / " + floatToString(totalSpace,2)+ " GB (" + to_string(freeSpacePerc)+"%)";
     return str;
+#endif
 }
 
 /*
@@ -348,6 +377,7 @@ string Util::commaSep(string s, int pos) {
 string Util::execUnixCommad(const char* cmd){
     array<char, 128> buffer;
     string result;
+    cout << "Exec:" << cmd << endl;
     unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
     if (!pipe) {
         throw runtime_error("popen() failed!");
@@ -355,8 +385,22 @@ string Util::execUnixCommad(const char* cmd){
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
     }
-    result.erase(remove(result.begin(),result.end(),'\n'));
+    if (!result.empty()) {
+        result.erase(remove(result.begin(), result.end(), '\n'));
+    }
     return result;
+}
+
+void Util::execFork(const char *cmd,  std::vector<const char *> argvNew)
+{
+    string link = cmd;
+
+    int pid = fork();
+    if (!pid) {
+        execvp(link.c_str(), (char **) argvNew.data());
+    }
+
+    waitpid(pid, NULL, 0);
 }
 
 /*

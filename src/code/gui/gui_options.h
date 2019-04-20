@@ -21,6 +21,7 @@ public:
     string getBooleanIcon(string input);
     void renderOptionLine(string text, int pos, int offset);
 
+
     int selOption=0;
     int totalHeight=0;
 
@@ -31,9 +32,15 @@ public:
     vector<string> nomusic;
     vector<string> autoregion;
     vector<string> quickboot;
+    vector<string> quickmenu;
     vector<string> retroarch;
     vector<string> adv;
     vector<string> languages;
+    vector<string> ui;
+    vector<string> aspect;
+    vector<string> origames;
+    vector<string> jewels;
+    vector<string> music;
 
     using GuiScreen::GuiScreen;
 };

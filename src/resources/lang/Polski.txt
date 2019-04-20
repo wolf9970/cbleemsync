@@ -79,7 +79,7 @@ do skanowania
 Game:
 Gra:
 Code: AutoBleem Team (screemer, mGGk, nex, ThaFridge)
-Autorzy: AutoBleem Team (screemer, mGGk, nex, ThaFridge)
+Autorzy: AutoBleem Team (screemer, mGGk, nex, ThaFridge) / Tłumczenie screemer, Azazel
 Folder:
 Folder
 Published by:
@@ -156,3 +156,83 @@ Language:
 Język:
 RetroArch is not installed
 RetroArch jest nie zainstalowany
+Enter
+Wejdź
+Console Button Guide
+Opis funkcji konsoli
+-=Button Guide=-
+-=Sterowanie=-
+DPAD - Same as classic menu
+Kierunki - Tak samo jak w klasycznym menu
+Select or cancel highlighted option
+Wybierz lub anuluj podświetloną opcję
+Quick scroll to next letter
+Szybki przeskok do następnej litery
+Games filter
+Filtr gier
+-=In Game=-
+-=W Grze=-
+Emulator config MENU
+MENU kofiguracji emulatora
+Quit emulation - back to AutoBleem
+Zakończ emulację - powrót do AutoBleem
+IN BOOT MENU TO POWER OFF THE CONSOLE (SAFE POWER OFF !!!)
+W MENU STARTOWYM - BEZPIECZNE WYŁĄCZENIE KONSOLI
+SETTINGS
+USTAWIENIA
+GAME
+GRA
+MEMORY CARD
+KARTA PAMIĘCI
+RESUME
+WZNÓW
+Customize AutoBleem settings
+Dostosuj ustawienia Autobleem
+Edit game parameters
+Edytuj parametry gry
+Edit Memory Card information
+Edytuj informacje Karty Pamięci
+Resume game from saved state point
+Wznów grę od ostatnigo punktu zapisu
+Showing: All games
+Wyświetla: Wszystkie gry
+Showing: Internal games
+Wyświetla: Wewnętrzne gry
+Showing: USB games
+Wyświetla: Gry z USB
+Showing: Favourite games
+Wyświetla: Ulubione gry
+Player
+Gracz
+Players
+Graczy
+Customize PlayStationClassic or AutoBleem settings
+Dostosuj ustawienia PlayStationClassic lub Autobleem
+OOPS! Game crashed. Resume point not available.
+UUPS! Wysypało grę. Punkt wznowienia niedostępny.
+Enter
+Wejdź
+Console Button Guide
+Opis funkcji konsoli
+MemCard Manager will be available soon
+Menadżer Katy Pamięci będzie dostępny wkrótce
+It is not possible to edit internal games
+Nie można edytować wewnętrznych gier
+Resume point saved to slot
+Zapisano punkt wznowienia do slotu
+NO GAMES FOUND IN THIS SECTION
+BRAK GIER W TEJ SEKCJI
+SELECT RESUME SLOT TO LOAD
+WYBIERZ SLOT DO WCZYTANIA
+SELECT SLOT TO SAVE STATE
+WYBIERZ SLOT DO ZAPISU
+Slot
+Slot
+Internal Games:
+Wewnętrzne Gry:
+Widescreen:
+Pełny ekran:
+Power Off
+Wyłączanie
+POWERING OFF... PLEASE WAIT
+WYŁĄCZANIE KONSOLI ... PROSZĘ CZEKAĆ

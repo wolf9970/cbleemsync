@@ -65,8 +65,16 @@ void GuiSplash::loop() {
     alpha = 0;
     start = SDL_GetTicks();
     while (1) {
+        gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             if (e.type == SDL_QUIT)
                 break;
             else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
@@ -80,9 +88,12 @@ void GuiSplash::loop() {
         render();
         int current = SDL_GetTicks();
         int time = current - start;
-        if (time > 5) {
+        if (time > 2) {
             if (alpha < 255) {
-                alpha += 1;
+                alpha += 2;
+                if (alpha > 255) {
+                    alpha = 255;
+                }
             } else {
 
                 break;

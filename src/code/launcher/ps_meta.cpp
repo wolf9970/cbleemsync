@@ -4,21 +4,29 @@
 
 #include "ps_meta.h"
 
-void PsMeta::updateTexts(string gameNameTxt, string publisherTxt, string yearTxt, string playersTxt) {
+void
+PsMeta::updateTexts(string gameNameTxt, string publisherTxt, string yearTxt, string playersTxt, bool internal, bool hd,
+                    bool locked, int discs, int r,int g, int b) {
+    this->discs = discs;
+    this->internal = internal;
+    this->hd = hd;
+    this->locked = locked;
     this->gameName = gameNameTxt;
     this->publisher = publisherTxt;
     this->year = yearTxt;
     this->players = playersTxt;
 
+    if (discsTex != nullptr) SDL_DestroyTexture(discsTex);
     if (gameNameTex != nullptr) SDL_DestroyTexture(gameNameTex);
     if (publisherTex != nullptr) SDL_DestroyTexture(publisherTex);
     if (yearTex != nullptr) SDL_DestroyTexture(yearTex);
     if (playersTex != nullptr) SDL_DestroyTexture(gameNameTex);
 
-    gameNameTex = createTextTex(gameName, 255, 255, 255, font30);
-    publisherTex = createTextTex(publisher, 255, 255, 255, font15);
-    yearTex = createTextTex(year, 255, 255, 255, font15);
-    playersTex = createTextTex(playersTxt, 255, 255, 255, font15);
+    gameNameTex = createTextTex(gameName, r,g,b, font30);
+    publisherTex = createTextTex(publisher, r,g,b, font15);
+    yearTex = createTextTex(year, r,g,b, font15);
+    playersTex = createTextTex(playersTxt, r,g,b, font15);
+    discsTex = createTextTex(to_string(discs),r,g,b,font15);
 
 
 }
@@ -29,10 +37,37 @@ void PsMeta::destroy() {
     if (yearTex != nullptr) SDL_DestroyTexture(yearTex);
     if (playersTex != nullptr) SDL_DestroyTexture(playersTex);
     SDL_DestroyTexture(tex);
+    SDL_DestroyTexture(discsTex);
+
+    if (internalOffTex != nullptr) {
+
+        SDL_DestroyTexture(internalOnTex);
+        SDL_DestroyTexture(internalOffTex);
+        SDL_DestroyTexture(hdOnTex);
+        SDL_DestroyTexture(hdOffTex);
+        SDL_DestroyTexture(lockOnTex);
+        SDL_DestroyTexture(cdTex);
+    }
 
 }
 
 void PsMeta::render() {
+
+    if (gameName=="")
+    {
+        return;
+    }
+
+    if (internalOffTex == nullptr) {
+        string curPath = Util::getWorkingPath();
+        internalOnTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/ps1.png").c_str());
+        internalOffTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/usb.png").c_str());
+        hdOnTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/hd.png").c_str());
+        hdOffTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/sd.png").c_str());
+        lockOnTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/lock.png").c_str());
+        lockOffTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/unlock.png").c_str());
+        cdTex = IMG_LoadTexture(renderer, (curPath + "/evoimg/cd.png").c_str());
+    }
 
     if (visible) {
         Uint32 format;
@@ -45,6 +80,8 @@ void PsMeta::render() {
         rect.x = x;
         rect.y = y;
         rect.w = w;
+
+        if (rect.w > 490) rect.w = 490;
         rect.h = h;
         fullRect.x = 0;
         fullRect.y = 0;
@@ -102,6 +139,63 @@ void PsMeta::render() {
         fullRect.h = h;
         SDL_RenderCopy(renderer, tex, &fullRect, &rect);
 
+        int offset = 190, spread=40;
+        // render internal icon
+        rect.x = x+120;
+        SDL_RenderCopy(renderer, cdTex, &fullRect, &rect);
+
+        SDL_QueryTexture(discsTex, &format, &access, &w, &h);
+        rect.x =  x+155;
+        rect.y = y + 43 + 22 + 30;
+        rect.w = w;
+        rect.h = h;
+
+        fullRect.x = 0;
+        fullRect.y = 0;
+        fullRect.w = w;
+        fullRect.h = h;
+        SDL_RenderCopy(renderer, discsTex, &fullRect, &rect);
+
+
+
+        rect.x = x+offset;
+        rect.y = y + 43 + 22 + 28;
+        rect.w = 30;
+        rect.h = 30;
+
+        fullRect.x = 0;
+        fullRect.y = 0;
+        fullRect.w = 30;
+        fullRect.h = 30;
+        if (internal)
+        {
+            locked = true;
+            hd = false;
+            SDL_RenderCopy(renderer, internalOnTex, &fullRect, &rect);
+        } else
+        {
+            SDL_RenderCopy(renderer, internalOffTex, &fullRect, &rect);
+        }
+        rect.x = x+offset+spread;
+        if (hd)
+        {
+            SDL_RenderCopy(renderer, hdOnTex, &fullRect, &rect);
+        } else
+        {
+            SDL_RenderCopy(renderer, hdOffTex, &fullRect, &rect);
+        }
+        rect.x = x+offset+spread*2;
+        if (locked)
+        {
+            SDL_RenderCopy(renderer, lockOnTex, &fullRect, &rect);
+        } else
+        {
+            SDL_RenderCopy(renderer, lockOffTex, &fullRect, &rect);
+        }
+
+
+
+
     }
 }
 
@@ -128,6 +222,7 @@ SDL_Texture *PsMeta::createTextTex(string text, Uint8 r, Uint8 g, Uint8 b, TTF_F
 }
 
 void PsMeta::update(long time) {
+
 
     if (visible)
         if (animEndTime != 0) {

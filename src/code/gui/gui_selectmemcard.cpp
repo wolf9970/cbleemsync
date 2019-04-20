@@ -89,6 +89,13 @@ void GuiSelectMemcard::loop() {
     while (menuVisible) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -96,7 +103,7 @@ void GuiSelectMemcard::loop() {
             switch (e.type) {
                 case SDL_JOYAXISMOTION:
                     if (e.jaxis.axis == 1) {
-                        if (e.jaxis.value > 3200) {
+                        if (e.jaxis.value > PCS_DEADZONE) {
 
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected++;
@@ -107,7 +114,7 @@ void GuiSelectMemcard::loop() {
                             }
                             render();
                         }
-                        if (e.jaxis.value < -3200) {
+                        if (e.jaxis.value < -PCS_DEADZONE) {
 
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected--;

@@ -15,10 +15,33 @@ Config::Config()
     if (inifile.values["delay"] == "") {
         inifile.values["delay"] = "1";
     }
+
+    if (inifile.values["ui"]=="")
+    {
+        inifile.values["ui"]="classic";
+    }
+    if (inifile.values["aspect"]=="")
+    {
+        inifile.values["aspect"]="false";
+    }
+    if (inifile.values["jewel"]=="")
+    {
+        inifile.values["jewel"]="default";
+    }
+    if (inifile.values["quickmenu"]=="")
+    {
+        inifile.values["quickmenu"]="UI";
+    }
+    if (inifile.values["music"]=="")
+    {
+        inifile.values["music"]="--";
+    }
+    inifile.values["pcsx"]="bleemsync";
 }
 
 void Config::save()
 {
+    inifile.values["pcsx"]="bleemsync";
     string path=Util::getWorkingPath()+Util::separator()+"config.ini";
     inifile.save(path);
 }

@@ -10,8 +10,10 @@
 #include <string>
 #include "gui.h"
 #include "gui_editor.h"
+#include "gui_confirm.h"
 #include "../main.h"
 #include "../lang.h"
+#include <ftw.h>
 
 bool wayToSort(Inifile i, Inifile j) {
     string title1 = i.values["title"];
@@ -88,8 +90,25 @@ void GuiManager::render()
     }
 
 
-    gui->renderStatus(_("Game")+" " + to_string(selected + 1) + "/" + to_string(games.size()) +"    |@L1|/|@R1| "+_("Page")+"   |@X| "+_("Select")+"  |@O| "+_("Close")+" |");
+    gui->renderStatus(_("Game")+" " + to_string(selected + 1) + "/" + to_string(games.size()) +"    |@L1|/|@R1| "+_("Page")+"   |@X| "+_("Select")+"  |@T| "+_("Flush covers")+" |@O| "+_("Close")+" |");
     SDL_RenderPresent(renderer);
+}
+
+
+int process(const char *file, const struct stat *sb,
+            int flag, struct FTW *s)
+{
+    int retval = 0;
+
+
+    if (Util::getFileExtension(file)=="png")
+    {
+
+        remove(file);
+    }
+
+
+    return retval;
 }
 
 void GuiManager::loop()
@@ -97,8 +116,16 @@ void GuiManager::loop()
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
+        gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -106,7 +133,7 @@ void GuiManager::loop()
             switch (e.type) {
                 case SDL_JOYAXISMOTION:
                     if (e.jaxis.axis == 1) {
-                        if (e.jaxis.value > 3200) {
+                        if (e.jaxis.value > PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected++;
                             if (selected >= games.size()) {
@@ -116,7 +143,7 @@ void GuiManager::loop()
                             }
                             render();
                         }
-                        if (e.jaxis.value < -3200) {
+                        if (e.jaxis.value < -PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected--;
                             if (selected < 0) {
@@ -160,6 +187,39 @@ void GuiManager::loop()
                         menuVisible = false;
 
                     };
+
+
+                    if (e.jbutton.button == PCS_BTN_TRIANGLE) {
+                        Mix_PlayChannel(-1, gui->cursor, 0);
+                        GuiConfirm * confirm = new GuiConfirm(renderer);
+                        confirm->label = _("Are you sure you want to flush all covers ?");
+                        confirm->show();
+                        bool delCovers = confirm->result;
+                        delete confirm;
+
+                        if (delCovers)
+                        {
+                            cout << "Trying to delete covers" << endl;
+                            gui->renderStatus(_("Please wait ... deleting covers..."));
+
+
+                            int errors = 0;
+                            int flags = FTW_DEPTH | FTW_PHYS | FTW_CHDIR;
+
+
+                            if (nftw("/media/Games", process, 1, flags) != 0) {
+
+                                errors++;
+                            }
+
+
+
+                            gui->forceScan = true;
+                            menuVisible = false;
+                        } else {
+                            render();
+                        }
+                    }
 
 
                     if (e.jbutton.button == PCS_BTN_CROSS) {

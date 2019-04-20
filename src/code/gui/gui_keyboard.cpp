@@ -99,10 +99,19 @@ void GuiKeyboard::render() {
 
 void GuiKeyboard::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
+
     bool menuVisible = true;
     while (menuVisible) {
+        gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -166,7 +175,7 @@ void GuiKeyboard::loop() {
                     break;
                 case SDL_JOYAXISMOTION:
                     if (e.jaxis.axis == 0) {
-                        if (e.jaxis.value > 3200) {
+                        if (e.jaxis.value > PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selx++;
                             if (selx > 9) {
@@ -174,7 +183,7 @@ void GuiKeyboard::loop() {
                             }
                             render();
                         }
-                        if (e.jaxis.value < -3200) {
+                        if (e.jaxis.value < -PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selx--;
                             if (selx < 0) {
@@ -184,7 +193,7 @@ void GuiKeyboard::loop() {
                         }
                     }
                     if (e.jaxis.axis == 1) {
-                        if (e.jaxis.value > 3200) {
+                        if (e.jaxis.value > PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             sely++;
                             if (sely > 3) {
@@ -192,7 +201,7 @@ void GuiKeyboard::loop() {
                             }
                             render();
                         }
-                        if (e.jaxis.value < -3200) {
+                        if (e.jaxis.value < -PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             sely--;
                             if (sely < 0) {

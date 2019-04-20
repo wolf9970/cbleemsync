@@ -68,8 +68,16 @@ void GuiMemcards::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
+        gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
@@ -77,7 +85,7 @@ void GuiMemcards::loop() {
             switch (e.type) {
                 case SDL_JOYAXISMOTION:
                     if (e.jaxis.axis == 1) {
-                        if (e.jaxis.value > 3200) {
+                        if (e.jaxis.value > PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected++;
                             if (selected >= cards.size()) {
@@ -87,7 +95,7 @@ void GuiMemcards::loop() {
                             }
                             render();
                         }
-                        if (e.jaxis.value < -3200) {
+                        if (e.jaxis.value < -PCS_DEADZONE) {
                             Mix_PlayChannel(-1, gui->cursor, 0);
                             selected--;
                             if (selected < 0) {

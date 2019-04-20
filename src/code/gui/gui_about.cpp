@@ -22,6 +22,8 @@ void GuiAbout::render() {
     gui->renderTextLine(_("Code: AutoBleem Team (screemer, mGGk, nex, ThaFridge) "), 2, offset);
     gui->renderTextLine(_("'Tenchu' theme by Kevzombie"), 3, offset);
 
+    gui->renderTextLine("Melancholia (Goth/Emo Type Beat) by | e s c p | & YellowTree | https://escp-music.bandcamp.com",4,offset);
+
     gui->renderTextLine(_("Support via Discord: https://discord.gg/AHUS3RM"), 5, offset);
     gui->renderTextLine(
             _("This is free and open source software. It works AS IS and We take no reponsibility for any issues or damage."),
@@ -36,8 +38,16 @@ void GuiAbout::loop() {
     shared_ptr<Gui> gui(Gui::getInstance());
     bool menuVisible = true;
     while (menuVisible) {
+        gui->watchJoystickPort();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.scancode == SDL_SCANCODE_SLEEP) {
+                    gui->drawText(_("POWERING OFF... PLEASE WAIT"));
+                    Util::powerOff();
+
+                }
+            }
             // this is for pc Only
             if (e.type == SDL_QUIT) {
                 menuVisible = false;
